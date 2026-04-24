@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Multi-LLM Answer System</title>
+</head>
+<body>
+  <h1>Ask Multiple LLMs</h1>
+
+  <input id="questionInput" type="text" placeholder="Enter your question" />
+  <button id="submitButton">Submit</button>
+
+  <h2>Responses</h2>
+  <div id="responses"></div>
+
+  <script>
+    document.getElementById("submitButton").addEventListener("click", async () => {
+      const question = document.getElementById("questionInput").value;
+
+      const response = await fetch("/query", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ question })
+      });
+
+      const data = await response.json();
+      const responsesDiv = document.getElementById("responses");
+      responsesDiv.innerHTML = "";
+
+      data.responses.forEach((item) => {
+        const div = document.createElement("div");
+        div.className = "llm-response";
+        div.innerHTML = `<h3>${item.model}</h3><p>${item.answer}</p>`;
+        responsesDiv.appendChild(div);
+      });
+    });
+  </script>
+</body>
+</html>
